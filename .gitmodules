@@ -1,0 +1,3 @@
+[submodule "src/github.com/xzf/gweb"]
+	path = src/github.com/xzf/gweb
+	url = git@github.com:xzf/gweb
