@@ -1,3 +1,9 @@
+/*
+ * Author : xzf
+ * Time    : 2020-04-26 00:50:22
+ * Email   : xpoony@163.com
+ */
+
 package main
 
 import (
@@ -15,9 +21,39 @@ type web struct {
 
 func main() {
 	w := web{}
-	fmt.Println("------------")
-	gweb.NewHttpServer("", &w)
-	fmt.Println("------------")
+	gweb.NewHttpServer(":2333",w)
+	//fmt.Println("------------")
+	//gweb.ParseWebApiObj(w)
+	//gweb.NewHttpServer("", &w)
+	//fmt.Println("------------")
+	//w := web{}
+	//
+	//t := reflect.ValueOf(w)
+	//for i := 0; i < t.NumMethod(); i++ {
+	//	method := t.Method(i)
+	//	in:=[]reflect.Value{}
+	//	for ii := 0; ii < method.Type().NumIn(); ii++ {
+	//		tt := method.Type().In(ii)
+	//		switch tt.Kind() {
+	//		case reflect.Struct:
+	//			for iti:=0;iti<tt.NumField();iti++{
+	//				itf:=tt.Field(iti)
+	//				fmt.Println(tt.Name(),itf.Name,itf.Type)
+	//
+	//			}
+	//		default:
+	//			fmt.Println("unsupport method para type",tt.Kind().String())
+	//			return
+	//		}
+	//		//p:=reflect.New(tt)
+	//
+	//		in = append(in, )
+	//		fmt.Println(tt.Name())
+	//	}
+	//	//method.Call([]reflect.Value{
+	//	//
+	//	//})
+	//}
 }
 
 type AReq struct {
