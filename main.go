@@ -9,6 +9,10 @@ package main
 import (
 	"fmt"
 	"github.com/xzf/gweb"
+	"net/http"
+	"time"
+	"encoding/json"
+	"io/ioutil"
 )
 
 type web struct {
@@ -20,8 +24,30 @@ type web struct {
 //}
 
 func main() {
-	w := web{}
-	gweb.NewHttpServer(":2333",w)
+	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		path := request.URL.Path
+		var result = `path : ` + path + `
+get query : `
+		query, _ := json.MarshalIndent(request.URL.Query(), "", "\t")
+		result += string(query) + `
+body : `
+		body, _ := ioutil.ReadAll(request.Body)
+		result += string(body) + `
+post query : `
+		fmt.Println("", )
+		err := request.ParseForm()
+		if err == nil {
+			postQuery, _ := json.MarshalIndent(request.PostForm, "", "\t")
+			result += string(postQuery)
+		}
+		writer.Write([]byte(result))
+	})
+	http.ListenAndServe(":2333", nil)
+	for {
+		time.Sleep(time.Second)
+	}
+	//w := web{}
+	//gweb.NewHttpServer(":2333",w)
 	//fmt.Println("------------")
 	//gweb.ParseWebApiObj(w)
 	//gweb.NewHttpServer("", &w)
