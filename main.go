@@ -7,12 +7,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/xzf/gweb"
 	"net/http"
-	"time"
-	"encoding/json"
-	"io/ioutil"
+	"reflect"
 )
 
 type web struct {
@@ -22,30 +21,61 @@ type web struct {
 //func(a web)FuncA(){
 //	fmt.Println(111)
 //}
+type SampleRequestParameter struct {
+	QueryFormMap map[string][]string `json:",omitempty"`
+	PostFormMap  map[string][]string `json:",omitempty"`
+	Body         []byte              `json:",omitempty"`
+	Path         string              `json:",omitempty"`
+	Request      *http.Request       `json:"-"`
+	// cookie
+	// header
+	// session
+}
+
+func (para SampleRequestParameter) ToJsonByteSlice() (result []byte) {
+	var err error
+	result, err = json.Marshal(para)
+	if err != nil {
+		return
+	}
+	return
+}
 
 func main() {
-	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-		path := request.URL.Path
-		var result = `path : ` + path + `
-get query : `
-		query, _ := json.MarshalIndent(request.URL.Query(), "", "\t")
-		result += string(query) + `
-body : `
-		body, _ := ioutil.ReadAll(request.Body)
-		result += string(body) + `
-post query : `
-		fmt.Println("", )
-		err := request.ParseForm()
-		if err == nil {
-			postQuery, _ := json.MarshalIndent(request.PostForm, "", "\t")
-			result += string(postQuery)
-		}
-		writer.Write([]byte(result))
-	})
-	http.ListenAndServe(":2333", nil)
-	for {
-		time.Sleep(time.Second)
-	}
+	slice:=[]int{1,2,3}
+	t:=reflect.TypeOf(slice)
+	//v:=reflect.ValueOf(slice)
+	fmt.Println(t,t.Elem())
+
+	slice1:=[4]int{}
+	t=reflect.TypeOf(slice1)
+	fmt.Println(t.Kind())
+	//http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+	//	var para SampleRequestParameter
+	//	para.Path = request.URL.Path
+	//	queryMap := request.URL.Query()
+	//	if len(queryMap) != 0 {
+	//		para.QueryFormMap = queryMap
+	//	}
+	//	body, err := ioutil.ReadAll(request.Body)
+	//	if err == nil && len(body) != 0 {
+	//		para.Body = body
+	//	}
+	//	err = request.ParseForm()
+	//	postForm := request.PostForm
+	//	if err == nil && len(postForm) != 0 {
+	//		para.PostFormMap = postForm
+	//	}
+	//	_, _ = writer.Write(para.ToJsonByteSlice())
+	//})
+	//http.ListenAndServe(":2333", nil)
+	//for {
+	//	time.Sleep(time.Second)
+	//}
+
+	/*
+	 */
+
 	//w := web{}
 	//gweb.NewHttpServer(":2333",w)
 	//fmt.Println("------------")
