@@ -10,6 +10,9 @@ import (
 	"github.com/xzf/gweb"
 	"fmt"
 	"encoding/json"
+	"runtime"
+	"strings"
+	"time"
 )
 
 type web struct {
@@ -33,9 +36,10 @@ type Test2 struct {
 	Test1
 	Struct Test1
 }
-func toJsonByte(obj interface{})[]byte{
-	content,_:=json.MarshalIndent(obj,"\t","")
-	return  content
+
+func toJsonByte(obj interface{}) []byte {
+	content, _ := json.MarshalIndent(obj, "\t", "")
+	return content
 }
 func (obj web) Api() {
 	fmt.Println("call no para method")
@@ -48,10 +52,33 @@ func (obj web) ApiTest2(t Test2) {
 	fmt.Println(string(toJsonByte(t)))
 }
 
+func getGoroutineId() string {
+	var buf [128]byte
+	runtime.Stack(buf[:], false)
+	allInfo := string(buf[10:])
+	n := strings.Index(allInfo, " ")
+	return allInfo[:n]
+}
 func main() {
-	gweb.SetDebugMode()
-	gweb.NewHttpServer(":2333", web{})
+	//gweb.SetDebugMode()
+	//gweb.NewHttpServer(":2333", web{})
 
+	go func() {
+		for{
+			fmt.Println("------------ go 1",getGoroutineId())
+			time.Sleep(time.Second)
+		}
+	}()
+	go func() {
+		for{
+			fmt.Println("------------ go 2",getGoroutineId())
+			time.Sleep(time.Second)
+		}
+	}()
+	for{
+		fmt.Println("------------ go 4",getGoroutineId())
+		time.Sleep(time.Second)
+	}
 }
 
 /*
