@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"runtime"
 	"strings"
+	"net/http"
 	"time"
 )
 
@@ -42,14 +43,19 @@ func toJsonByte(obj interface{}) []byte {
 	return content
 }
 func (obj web) Api() {
+	fmt.Println(obj.GetGoRequest())
 	fmt.Println("call no para method")
+	obj.WriteBody([]byte("call no para method"))
 }
-
 func (obj web) ApiTest1(t Test1) {
-	fmt.Println(string(toJsonByte(t)))
+	body := toJsonByte(t)
+	fmt.Println(string(body))
+	obj.WriteBody(body)
 }
 func (obj web) ApiTest2(t Test2) {
-	fmt.Println(string(toJsonByte(t)))
+	body := toJsonByte(t)
+	fmt.Println(string(body))
+	obj.WriteBody(body)
 }
 
 func getGoroutineId() string {
@@ -60,23 +66,31 @@ func getGoroutineId() string {
 	return allInfo[:n]
 }
 func main() {
-	//gweb.SetDebugMode()
-	//gweb.NewHttpServer(":2333", web{})
+	gweb.SetDebugMode()
+	gweb.NewHttpServer(":2333", &web{})
+	return
+	type tmpW struct {
+		w http.ResponseWriter
+	}
+	type tmpM struct {
+		m map[string]tmpW
+	}
 
-	go func() {
-		for{
-			fmt.Println("------------ go 1",getGoroutineId())
-			time.Sleep(time.Second)
+	m := tmpM{
+		m: map[string]tmpW{},
+	}
+	tmpFunc := func(id string, str string) {
+		m.m[id].w.Write([]byte(str))
+	}
+	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		m.m["233"] = tmpW{
+			w: writer,
 		}
-	}()
-	go func() {
-		for{
-			fmt.Println("------------ go 2",getGoroutineId())
-			time.Sleep(time.Second)
-		}
-	}()
-	for{
-		fmt.Println("------------ go 4",getGoroutineId())
+		tmpFunc("233", "233333333333333333333")
+
+	})
+	http.ListenAndServe(":2333", nil)
+	for {
 		time.Sleep(time.Second)
 	}
 }
