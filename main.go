@@ -53,7 +53,6 @@ func (obj web) ApiTest2(t Test2) {
 	obj.WriteBody(body)
 }
 func main() {
-	gweb.SetDebugMode()
+	//gweb.SetDebugMode()
 	gweb.NewHttpServer(":2333", &web{})
-
 }
