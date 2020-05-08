@@ -54,5 +54,11 @@ func (obj web) ApiTest2(t Test2) {
 }
 func main() {
 	//gweb.SetDebugMode()
-	gweb.NewHttpServer(":2333", &web{})
+	gweb.NewHttpServer(gweb.NewHttpRequest{
+		Addr:   ":2333",
+		Obj:    &web{},
+		FileRootPath:"/Users/xzf",
+		FilePathPrefix:"files",
+	})
+	gweb.WaitForKill()
 }
