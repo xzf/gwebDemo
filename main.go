@@ -15,6 +15,7 @@ import (
 type web struct {
 	gweb.WebApi
 }
+
 type Test1 struct {
 	Str string
 	I   int64
@@ -33,6 +34,7 @@ type Test2 struct {
 	Test1
 	Struct Test1
 }
+
 func toJsonByte(obj interface{}) []byte {
 	content, _ := json.MarshalIndent(obj, "\t", "")
 	return content
@@ -42,23 +44,33 @@ func (obj web) Api() {
 	fmt.Println("call no para method")
 	obj.WriteBody([]byte("call no para method"))
 }
+
 func (obj web) ApiTest1(t Test1) {
 	body := toJsonByte(t)
 	fmt.Println(string(body))
 	obj.WriteBody(body)
 }
+
 func (obj web) ApiTest2(t Test2) {
 	body := toJsonByte(t)
 	fmt.Println(string(body))
 	obj.WriteBody(body)
 }
+func (obj web) FileUpAction() {
+	slice := obj.GetFileSlice()
+	for _, item := range slice {
+		fmt.Println(item.FileName,item.Content)
+	}
+	
+}
+
 func main() {
 	gweb.SetDebugMode()
 	gweb.NewHttpServer(gweb.NewHttpRequest{
-		Addr:   ":2333",
-		Obj:    &web{},
-		FileRootPath:"D:\\WorkSpace\\gwebDemo",
-		FilePathPrefix:"files",
+		Addr:           ":2333",
+		Obj:            &web{},
+		FileRootPath:   "D:\\WorkSpace\\gwebDemo",
+		FilePathPrefix: "files",
 	})
 	gweb.WaitForKill()
 }
